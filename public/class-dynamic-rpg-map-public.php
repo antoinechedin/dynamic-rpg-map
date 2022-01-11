@@ -20,7 +20,8 @@
  * @subpackage Dynamic_RPG_Map/public
  * @author     Your Name <email@example.com>
  */
-class Dynamic_RPG_Map_Public {
+class Dynamic_RPG_Map_Public
+{
 
 	/**
 	 * The ID of this plugin.
@@ -47,11 +48,11 @@ class Dynamic_RPG_Map_Public {
 	 * @param      string    $dynamic_rpg_map       The name of the plugin.
 	 * @param      string    $version    The version of this plugin.
 	 */
-	public function __construct( $dynamic_rpg_map, $version ) {
+	public function __construct($dynamic_rpg_map, $version)
+	{
 
 		$this->dynamic_rpg_map = $dynamic_rpg_map;
 		$this->version = $version;
-
 	}
 
 	/**
@@ -59,7 +60,8 @@ class Dynamic_RPG_Map_Public {
 	 *
 	 * @since    0.1.0
 	 */
-	public function enqueue_styles() {
+	public function enqueue_styles()
+	{
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -73,8 +75,7 @@ class Dynamic_RPG_Map_Public {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->dynamic_rpg_map, plugin_dir_url( __FILE__ ) . 'css/dynamic-rpg-map-public.css', array(), $this->version, 'all' );
-
+		wp_enqueue_style($this->dynamic_rpg_map, plugin_dir_url(__FILE__) . 'css/dynamic-rpg-map-public.css', array(), $this->version, 'all');
 	}
 
 	/**
@@ -82,7 +83,8 @@ class Dynamic_RPG_Map_Public {
 	 *
 	 * @since    0.1.0
 	 */
-	public function enqueue_scripts() {
+	public function enqueue_scripts()
+	{
 
 		/**
 		 * This function is provided for demonstration purposes only.
@@ -96,8 +98,46 @@ class Dynamic_RPG_Map_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->dynamic_rpg_map, plugin_dir_url( __FILE__ ) . 'js/dynamic-rpg-map-public.js', array( 'jquery' ), $this->version, false );
-
+		wp_enqueue_script($this->dynamic_rpg_map, plugin_dir_url(__FILE__) . 'js/dynamic-rpg-map-public.js', array('jquery'), $this->version, false);
 	}
 
+	function rpg_map_custom_post_type()
+	{
+		register_post_type(
+			'rpg_map_location',
+			array(
+				'labels' => array(
+					'name' => 'Locations',
+					'singular_name' => 'Location',
+				),
+				'public' => true,
+				'has_archive' => true,
+				'rewrite' => array('slug' => 'location'),
+				'menu_postion' => 5,
+				'taxonomies' => array('post_tag'),
+				'supports' => array(
+					'title',
+					'editor',
+					'revision',
+					'excerpt'
+				),
+			)
+		);
+
+		register_post_type(
+			'rpg_map_quest',
+			array(
+				'labels' => array(
+					'name' => 'Quests',
+					'singular_name' => 'Quest',
+				),
+				'public' => true,
+				'has_archive' => true,
+				'rewrite' => array('slug' => 'quest'),
+				'menu_postion' => 5,
+				'taxonomies' => array('post_tag'),
+
+			)
+		);
+	}
 }
