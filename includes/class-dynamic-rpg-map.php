@@ -157,7 +157,6 @@ class Dynamic_RPG_Map
 
 		$this->loader->add_action('admin_menu', $plugin_admin, 'dynamic_rpg_map_options_page');
 
-
 		$this->loader->add_action('add_meta_boxes', $plugin_admin, 'rpg_map_add_meta_box');
 		$this->loader->add_action('save_post', $plugin_admin, 'rpg_map_save_post_meta');
 	}
@@ -175,7 +174,9 @@ class Dynamic_RPG_Map
 		$plugin_public = new Dynamic_RPG_Map_Public($this->get_dynamic_rpg_map(), $this->get_version());
 
 		$this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
+		$this->loader->add_filter('style_loader_tag', $plugin_public, 'add_style_attributes', 10, 2);
 		$this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
+		$this->loader->add_filter('script_loader_tag', $plugin_public, 'add_sctipt_attributes', 10, 3);
 
 		$this->loader->add_action('init', $plugin_public, 'rpg_map_custom_post_type');
 	}

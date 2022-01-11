@@ -62,20 +62,8 @@ class Dynamic_RPG_Map_Public
 	 */
 	public function enqueue_styles()
 	{
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Dynamic_RPG_Map_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Dynamic_RPG_Map_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
 		wp_enqueue_style($this->dynamic_rpg_map, plugin_dir_url(__FILE__) . 'css/dynamic-rpg-map-public.css', array(), $this->version, 'all');
+		wp_enqueue_style('leaflet', 'https://unpkg.com/leaflet@1.7.1/dist/leaflet.css');
 	}
 
 	/**
@@ -85,20 +73,24 @@ class Dynamic_RPG_Map_Public
 	 */
 	public function enqueue_scripts()
 	{
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Dynamic_RPG_Map_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Dynamic_RPG_Map_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
 		wp_enqueue_script($this->dynamic_rpg_map, plugin_dir_url(__FILE__) . 'js/dynamic-rpg-map-public.js', array('jquery'), $this->version, false);
+		wp_enqueue_script('leaflet', 'https://unpkg.com/leaflet@1.7.1/dist/leaflet.js', array(), null, false);
+	}
+
+	public function add_style_attributes($html, $handle)
+	{
+		if ('leaflet' === $handle) {
+			return str_replace('media="all"', 'integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""', $html);
+		}
+		return $html;
+	}
+
+	public function add_sctipt_attributes($tag, $handle, $src)
+	{
+		if ('leaflet' == $handle) {
+			return '<script src="' . $src . '" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>' . "\n";
+		}
+		return $tag;
 	}
 
 	function rpg_map_custom_post_type()

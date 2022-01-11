@@ -76,6 +76,7 @@ class Dynamic_RPG_Map_Admin
 		 */
 
 		wp_enqueue_style($this->dynamic_rpg_map, plugin_dir_url(__FILE__) . 'css/dynamic-rpg-map-admin.css', array(), $this->version, 'all');
+		wp_enqueue_style('leaflet', 'https://unpkg.com/leaflet@1.7.1/dist/leaflet.css');
 	}
 
 	/**
@@ -99,6 +100,7 @@ class Dynamic_RPG_Map_Admin
 		 */
 
 		wp_enqueue_script($this->dynamic_rpg_map, plugin_dir_url(__FILE__) . 'js/dynamic-rpg-map-admin.js', array('jquery'), $this->version, false);
+		wp_enqueue_script('leaflet', 'https://unpkg.com/leaflet@1.7.1/dist/leaflet.js', array(), null, false);
 	}
 
 	function dynamic_rpg_map_options_page()
@@ -146,33 +148,66 @@ class Dynamic_RPG_Map_Admin
 
 	public function rpg_map_save_post_meta(int $post_id)
 	{
-		if (array_key_exists('rpg_map_latitude', $_POST)) {
+		if (array_key_exists('rpg-map-latitude', $_POST)) {
 			update_post_meta(
 				$post_id,
 				'_rpg_map_latitude',
-				$_POST['rpg_map_latitude']
+				$_POST['rpg-map-latitude']
 			);
 		}
 
-		if (array_key_exists('rpg_map_longitude', $_POST)) {
+		if (array_key_exists('rpg-map-longitude', $_POST)) {
 			update_post_meta(
 				$post_id,
 				'_rpg_map_longitude',
-				$_POST['rpg_map_longitude']
+				$_POST['rpg-map-longitude']
 			);
 		}
 	}
 
 	public function rpg_map_location_meta_box_html($post)
 	{
-		$latitude = get_post_meta($post->ID, '_rpg_map_latitude', true);
-		$longitude = get_post_meta($post->ID, '_rpg_map_longitude', true);
+		$latitude = get_post_meta($post->ID, '_rpg_map_latitude', true) ?: 0;
+		$longitude = get_post_meta($post->ID, '_rpg_map_longitude', true) ?: 0;
 	?>
 
-		<label for="rpg_map_latitude">Latitude</label>
-		<input name="rpg_map_latitude" id="rpg_map_latitude" type="number" step="0.01" placeholder="[-90.0, 90.0]" value="<?php echo $latitude ?>" />
-		<label for="rpg_map_longitude">Longitude</label>
-		<input name="rpg_map_longitude" id="rpg_map_longitude" type="number" step="0.01" placeholder="[-180.0, 180.0]" value="<?php echo $longitude ?>" />
+		<input name="rpg-map-latitude" id="rpg-map-latitude" type="hidden" value="<?php echo $latitude ?>" />
+		<input name="rpg-map-longitude" id="rpg-map-longitude" type="hidden" value="<?php echo $longitude ?>" />
+		<div id="rpg-map-meta-box" style="height: 180px;"></div>
+		<script>
+			var map = L.map('rpg-map-meta-box', {
+				minZoom: 0,
+				maxZoom: 2,
+				scrollWheelZoom: 'center'
+			});
+
+			L.tileLayer('http://localhost/wp-content/uploads/2022/01/{z}{y}{x}.jpg', {
+				minZoom: 0,
+				maxZoom: 2,
+				noWrap: true,
+				bounds: L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180))
+			}).addTo(map);
+			map.setView([<?php echo $latitude . ', ' . $longitude ?>], 0);
+
+			var oldMarker = L.marker([<?php echo $latitude . ', ' . $longitude ?>], {
+					opacity: 0.5
+				})
+				.addTo(map);
+			var centerMarker = L.marker([<?php echo $latitude . ', ' . $longitude ?>])
+				.addTo(map);
+
+			map.on('move', function() {
+				centerMarker.setLatLng(map.getCenter());
+			});
+
+			//Dragend event of map for update centerMarker position
+			map.on('dragend', function(e) {
+				var cnt = map.getCenter();
+				var position = centerMarker.getLatLng();
+				document.getElementById("rpg-map-latitude").value = position["lat"];
+				document.getElementById("rpg-map-longitude").value = position["lng"];
+			});
+		</script>
 <?php
 	}
 }
