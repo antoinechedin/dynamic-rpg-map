@@ -163,18 +163,48 @@ class Dynamic_RPG_Map_Admin
 				$_POST['rpg-map-longitude']
 			);
 		}
+
+		if (array_key_exists('rpg-map-marker-icon', $_POST)) {
+			update_post_meta(
+				$post_id,
+				'_rpg_map_marker_icon',
+				$_POST['rpg-map-marker-icon']
+			);
+		}
 	}
 
 	public function rpg_map_location_meta_box_html($post)
 	{
 		$latitude = get_post_meta($post->ID, '_rpg_map_latitude', true) ?: 0;
 		$longitude = get_post_meta($post->ID, '_rpg_map_longitude', true) ?: 0;
+		$selected_icon = get_post_meta($post->ID, '_rpg_map_marker_icon', true);
 	?>
 
 		<input name="rpg-map-latitude" id="rpg-map-latitude" type="hidden" value="<?php echo $latitude ?>" />
 		<input name="rpg-map-longitude" id="rpg-map-longitude" type="hidden" value="<?php echo $longitude ?>" />
-		<div id="rpg-map-meta-box" style="height: 180px;"></div>
+		<p id="rpg-map-meta-box" style="height: 180px;"></p>
+		<p>
+			<select name="rpg-map-marker-icon" id="rpg-map-marker-icon" onchange="changeMarkerIcon(this)">
+				<option value="">Par défault</option>
+				<?php
+				$icons = get_posts(array(
+					'post_type' => 'attachment',
+					'category' => 7,
+				));
+				echo '<script>console.log(' . json_encode($selected_icon) . ');</script>';
+				foreach ($icons as $icon) {
+					echo '<option value="' . $icon->guid . '"' . selected($selected_icon, $icon->guid, false) . '>' . $icon->post_title . '</option>';
+				}
+				?>
+			</select>
+		</p>
 		<script>
+			function changeMarkerIcon(selectedObj) {
+				centerMarker.setIcon(L.icon({
+					iconUrl: selectedObj.value
+				}));
+			}
+
 			var map = L.map('rpg-map-meta-box', {
 				minZoom: 0,
 				maxZoom: 2,
@@ -189,11 +219,20 @@ class Dynamic_RPG_Map_Admin
 			}).addTo(map);
 			map.setView([<?php echo $latitude . ', ' . $longitude ?>], 0);
 
+			<?php if ($selected_icon != '') { ?>
+				var currentIcon = L.icon({
+					iconUrl: "<?php echo $selected_icon  ?>"
+				});
+			<?php } ?>
+
 			var oldMarker = L.marker([<?php echo $latitude . ', ' . $longitude ?>], {
-					opacity: 0.5
+					opacity: 0.5,
+					<?php if ($selected_icon != '') echo 'icon: currentIcon'; ?>
 				})
 				.addTo(map);
-			var centerMarker = L.marker([<?php echo $latitude . ', ' . $longitude ?>])
+			var centerMarker = L.marker([<?php echo $latitude . ', ' . $longitude ?>], {
+					<?php if ($selected_icon != '') echo 'icon: currentIcon'; ?>
+				})
 				.addTo(map);
 
 			map.on('move', function() {

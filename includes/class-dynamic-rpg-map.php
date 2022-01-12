@@ -179,6 +179,8 @@ class Dynamic_RPG_Map
 		$this->loader->add_filter('script_loader_tag', $plugin_public, 'add_sctipt_attributes', 10, 3);
 
 		$this->loader->add_action('init', $plugin_public, 'rpg_map_custom_post_type');
+		$this->loader->add_action('init', $plugin_public, 'add_categories_to_attachments');
+
 	}
 
 	/**

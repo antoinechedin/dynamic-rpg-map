@@ -93,6 +93,11 @@ class Dynamic_RPG_Map_Public
 		return $tag;
 	}
 
+	function add_categories_to_attachments()
+	{
+		register_taxonomy_for_object_type('category', 'attachment');
+	}
+
 	function rpg_map_custom_post_type()
 	{
 		register_post_type(
