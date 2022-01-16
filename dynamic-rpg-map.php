@@ -16,7 +16,7 @@
  * Plugin Name:       Dynamic RPG map
  * Plugin URI:        https://github.com/antoinechedin/dynamic-rpg-map
  * Description:       Dynamic RPG map wordpress plugin.
- * Version:           0.1.0
+ * Version:           0.1.1
  * Author:            Antoine Chedin
  * Author URI:        https://antoinechedin.github.io/
  * License:           GPL-2.0+
@@ -34,7 +34,7 @@ if (!defined('WPINC')) {
  * Currently plugin version.
  * Rename this for your plugin and update it as you release new versions.
  */
-define('DYNAMIC_RPG_MAPVERSION', '0.1.0');
+define('DYNAMIC_RPG_MAPVERSION', '0.1.1');
 
 /**
  * The code that runs during plugin activation.

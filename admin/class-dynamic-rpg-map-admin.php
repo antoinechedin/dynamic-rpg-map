@@ -101,6 +101,7 @@ class Dynamic_RPG_Map_Admin
 
 		wp_enqueue_script($this->dynamic_rpg_map, plugin_dir_url(__FILE__) . 'js/dynamic-rpg-map-admin.js', array('jquery'), $this->version, false);
 		wp_enqueue_script('leaflet', 'https://unpkg.com/leaflet@1.7.1/dist/leaflet.js', array(), null, false);
+		wp_localize_script($this->dynamic_rpg_map, 'WORDPRESS', array('siteUrl' => get_option('siteurl')));
 	}
 
 	function dynamic_rpg_map_options_page()
@@ -211,7 +212,7 @@ class Dynamic_RPG_Map_Admin
 				scrollWheelZoom: 'center'
 			});
 
-			L.tileLayer('http://localhost/wp-content/uploads/2022/01/{z}{y}{x}.jpg', {
+			L.tileLayer(WORDPRESS.siteUrl + '/wp-content/uploads/2022/01/{z}{y}{x}.jpg', {
 				minZoom: 0,
 				maxZoom: 2,
 				noWrap: true,
