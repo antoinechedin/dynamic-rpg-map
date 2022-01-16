@@ -71,7 +71,7 @@ class Dynamic_RPG_Map
 		if (defined('DYNAMIC_RPG_MAPVERSION')) {
 			$this->version = DYNAMIC_RPG_MAPVERSION;
 		} else {
-			$this->version = '0.1.0';
+			$this->version = '0.1.1';
 		}
 		$this->dynamic_rpg_map = 'dynamic-rpg-map';
 
