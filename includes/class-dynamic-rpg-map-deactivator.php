@@ -20,7 +20,8 @@
  * @subpackage Dynamic_RPG_Map/includes
  * @author     Your Name <email@example.com>
  */
-class Dynamic_RPG_Map_Deactivator {
+class Dynamic_RPG_Map_Deactivator
+{
 
 	/**
 	 * Short Description. (use period)
@@ -29,8 +30,7 @@ class Dynamic_RPG_Map_Deactivator {
 	 *
 	 * @since    0.1.0
 	 */
-	public static function deactivate() {
-
+	public static function deactivate()
+	{
 	}
-
 }

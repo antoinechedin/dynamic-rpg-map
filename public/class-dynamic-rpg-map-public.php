@@ -20,7 +20,8 @@
  * @subpackage Dynamic_RPG_Map/public
  * @author     Your Name <email@example.com>
  */
-class Dynamic_RPG_Map_Public {
+class Dynamic_RPG_Map_Public
+{
 
 	/**
 	 * The ID of this plugin.
@@ -47,11 +48,11 @@ class Dynamic_RPG_Map_Public {
 	 * @param      string    $dynamic_rpg_map       The name of the plugin.
 	 * @param      string    $version    The version of this plugin.
 	 */
-	public function __construct( $dynamic_rpg_map, $version ) {
+	public function __construct($dynamic_rpg_map, $version)
+	{
 
 		$this->dynamic_rpg_map = $dynamic_rpg_map;
 		$this->version = $version;
-
 	}
 
 	/**
@@ -59,22 +60,10 @@ class Dynamic_RPG_Map_Public {
 	 *
 	 * @since    0.1.0
 	 */
-	public function enqueue_styles() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Dynamic_RPG_Map_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Dynamic_RPG_Map_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
-		wp_enqueue_style( $this->dynamic_rpg_map, plugin_dir_url( __FILE__ ) . 'css/dynamic-rpg-map-public.css', array(), $this->version, 'all' );
-
+	public function enqueue_styles()
+	{
+		wp_enqueue_style($this->dynamic_rpg_map, plugin_dir_url(__FILE__) . 'css/dynamic-rpg-map-public.css', array(), $this->version, 'all');
+		wp_enqueue_style('leaflet', 'https://unpkg.com/leaflet@1.7.1/dist/leaflet.css');
 	}
 
 	/**
@@ -82,22 +71,70 @@ class Dynamic_RPG_Map_Public {
 	 *
 	 * @since    0.1.0
 	 */
-	public function enqueue_scripts() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Dynamic_RPG_Map_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Dynamic_RPG_Map_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
-		wp_enqueue_script( $this->dynamic_rpg_map, plugin_dir_url( __FILE__ ) . 'js/dynamic-rpg-map-public.js', array( 'jquery' ), $this->version, false );
-
+	public function enqueue_scripts()
+	{
+		wp_enqueue_script($this->dynamic_rpg_map, plugin_dir_url(__FILE__) . 'js/dynamic-rpg-map-public.js', array('jquery'), $this->version, false);
+		wp_enqueue_script('leaflet', 'https://unpkg.com/leaflet@1.7.1/dist/leaflet.js', array(), null, false);
 	}
 
+	public function add_style_attributes($html, $handle)
+	{
+		if ('leaflet' === $handle) {
+			return str_replace('media="all"', 'integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""', $html);
+		}
+		return $html;
+	}
+
+	public function add_sctipt_attributes($tag, $handle, $src)
+	{
+		if ('leaflet' == $handle) {
+			return '<script src="' . $src . '" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>' . "\n";
+		}
+		return $tag;
+	}
+
+	function add_categories_to_attachments()
+	{
+		register_taxonomy_for_object_type('category', 'attachment');
+	}
+
+	function rpg_map_custom_post_type()
+	{
+		register_post_type(
+			'rpg_map_location',
+			array(
+				'labels' => array(
+					'name' => 'Locations',
+					'singular_name' => 'Location',
+				),
+				'public' => true,
+				'has_archive' => true,
+				'rewrite' => array('slug' => 'location'),
+				'menu_postion' => 5,
+				'taxonomies' => array('post_tag'),
+				'supports' => array(
+					'title',
+					'editor',
+					'revision',
+					'excerpt'
+				),
+			)
+		);
+
+		register_post_type(
+			'rpg_map_quest',
+			array(
+				'labels' => array(
+					'name' => 'Quests',
+					'singular_name' => 'Quest',
+				),
+				'public' => true,
+				'has_archive' => true,
+				'rewrite' => array('slug' => 'quest'),
+				'menu_postion' => 5,
+				'taxonomies' => array('post_tag'),
+
+			)
+		);
+	}
 }
